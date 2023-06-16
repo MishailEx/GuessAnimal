@@ -4,7 +4,6 @@ public class Game {
     private List<Animal> animals = new ArrayList<>();
     private Scanner scanner = new Scanner(System.in);
     private Set<Integer> usedKeys = new HashSet<>();
-
     Random random = new Random();
 
     public void start() {
@@ -64,7 +63,7 @@ public class Game {
 
     public boolean letsPlayAgain() {
         System.out.println("Сыграем ещё раз?");
-        String response = scanner.nextLine().trim();
+        String response = validAnswer();
         return response.equalsIgnoreCase(Response.ДА.name());
     }
 
