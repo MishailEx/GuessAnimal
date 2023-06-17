@@ -1,16 +1,19 @@
 import java.util.*;
 
 public class Game {
-    private List<Animal> animals = new ArrayList<>();
+    List<Animal> animals = new ArrayList<>(Arrays.asList(
+            new Animal("Кит", "Живет в воде"),
+            new Animal("Кот", "Живет на суше")
+    ));
     private Scanner scanner = new Scanner(System.in);
     private Set<Integer> usedKeys = new HashSet<>();
     Random random = new Random();
 
+    private boolean endGame = false;
+
     public void start() {
-        animals.add(new Animal("Кит", "Живет в воде"));
-        animals.add(new Animal("Кот", "Живет на суше"));
         System.out.println("Загадай животное, а я попробую угадать...");
-        while (true) {
+        while (!endGame) {
             if (animals.size() == usedKeys.size()) {
                 usedKeys.clear();
             }
@@ -21,31 +24,41 @@ public class Game {
                 usedKeys.add(randomNumber);
                 String response = validAnswer();
                 if (response.equalsIgnoreCase(Response.ДА.name())) {
-                    while (true) {
-                        System.out.printf("это - %s?\n", animals.get(randomNumber).getName());
-                        response = validAnswer();
-                        if (response.equalsIgnoreCase(Response.ДА.name())) {
-                            if (letsPlayAgain()) {
-                                break;
-                            }
-                            System.exit(0);
-                        }
-                        else {
-                            System.out.println("Какое животное ты загадал?");
-                            String name = scanner.nextLine().trim();
-                            System.out.printf("Чем %s отличается от %s?\n", name, animals.get(randomNumber).getName());
-                            String desc = scanner.nextLine().trim();
-                            animals.add(new Animal(name, desc));
-                            if (letsPlayAgain()) {
-                                break;
-                            }
-                            System.exit(0);
-                        }
-                    }
+                    positiveResponse(randomNumber);
+                    break;
                 }
                 break;
             }
         }
+    }
+
+    public void positiveResponse(int randomNumber) {
+        while (true) {
+            System.out.printf("это - %s?\n", animals.get(randomNumber).getName());
+            String response = validAnswer();
+            if (response.equalsIgnoreCase(Response.ДА.name())) {
+                if (letsPlayAgain()) {
+                    return;
+                }
+                endGame = true;
+            } else {
+                negativeResponse(randomNumber);
+                break;
+            }
+            break;
+        }
+    }
+
+    public void negativeResponse(int randomNumber) {
+        System.out.println("Какое животное ты загадал?");
+        String name = scanner.nextLine().trim();
+        System.out.printf("Чем %s отличается от %s?\n", name, animals.get(randomNumber).getName());
+        String desc = scanner.nextLine().trim();
+        animals.add(new Animal(name, desc));
+        if (letsPlayAgain()) {
+            return;
+        }
+        endGame = true;
     }
 
     public String validAnswer() {
@@ -58,7 +71,7 @@ public class Game {
                 System.out.println("Ответ должен быть \"да \" или \"нет\".");
             }
         }
-        return answer;
+        return answer.toLowerCase();
     }
 
     public boolean letsPlayAgain() {
@@ -67,6 +80,17 @@ public class Game {
         return response.equalsIgnoreCase(Response.ДА.name());
     }
 
+    public void setScanner(Scanner scanner) {
+        this.scanner = scanner;
+    }
+
+    public boolean isEndGame() {
+        return endGame;
+    }
+
+    public List<Animal> getAnimals() {
+        return new ArrayList<>(animals);
+    }
 
 
 }
