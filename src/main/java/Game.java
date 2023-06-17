@@ -7,7 +7,7 @@ public class Game {
     ));
     private Scanner scanner = new Scanner(System.in);
     private Set<Integer> usedKeys = new HashSet<>();
-    Random random = new Random();
+    private Random random = new Random();
 
     private boolean endGame = false;
 
